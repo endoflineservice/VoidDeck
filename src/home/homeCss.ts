@@ -192,10 +192,10 @@ export const homeCss = `
 .vd-tile { display: flex; flex-direction: column; gap: var(--vd-space-2); width: var(--vd-tile-width); flex: none; }
 .vd-tile-art {
   position: relative; display: grid; place-items: center; aspect-ratio: 2 / 3; overflow: hidden;
-  border-radius: var(--vd-radius-md); background-color: var(--vd-surface-raised);
+  border-radius: 0; background-color: var(--vd-surface-raised);
   background-image: radial-gradient(circle, var(--vd-ink-faint) 1.5px, transparent 1.75px);
   background-size: var(--vd-space-3) var(--vd-space-3);
-  transition: transform 150ms ease, box-shadow 150ms ease;
+  transition: transform 150ms ease;
 }
 /* Covers are monochrome until the tile is hovered or focused. */
 .vd-tile-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: filter 150ms ease; }
@@ -205,6 +205,18 @@ html[data-vd-bw="off"] .vd-tile-art img { filter: none; }
 .vd-tile-meta { display: flex; flex-direction: column; gap: 2px; padding: var(--vd-space-2) var(--vd-space-1) 0; opacity: 0; transition: opacity 150ms; }
 .vd-tile-title { font: 500 16px/22px var(--vd-font-sans); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .vd-tile-detail { font: 400 14px/20px var(--vd-font-sans); color: var(--vd-ink-muted); }
-.vd-tile.is-focused .vd-tile-art { transform: scale(1.06); box-shadow: var(--vd-focus-ring); }
+.vd-tile:hover .vd-tile-art, .vd-tile.is-focused .vd-tile-art {
+  transform: scale(1.06);
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+}
+.vd-tile:hover .vd-tile-art::after, .vd-tile.is-focused .vd-tile-art::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 2;
+  background:
+    linear-gradient(var(--vd-ink), var(--vd-ink)) 0 0 / 100% 1.5px no-repeat,
+    linear-gradient(var(--vd-ink), var(--vd-ink)) 0 100% / 100% 1.5px no-repeat,
+    linear-gradient(var(--vd-ink), var(--vd-ink)) 0 0 / 1.5px 100% no-repeat,
+    linear-gradient(var(--vd-ink), var(--vd-ink)) 100% 0 / 1.5px 100% no-repeat,
+    linear-gradient(to top right, transparent calc(50% - 1.5px), var(--vd-ink) calc(50% - 1.5px) 50%, transparent 50%) 100% 0 / 14px 14px no-repeat;
+}
 .vd-tile.is-focused .vd-tile-meta { opacity: 1; }
 `;

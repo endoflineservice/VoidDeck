@@ -1,12 +1,16 @@
 // Library and other tabbed Steam pages (GamepadTabbedPage module).
 // Measurements are in Steam CSS px: 1 px here = 1.5 design px.
 import { cls } from "../steam/classes";
+import { join } from "./selectors";
 
 export function libraryCss(): string {
   const tab = cls("Tab", "TabCount");
   const selected = cls("Selected", "TabCount");
   const glyphs = cls("Glyphs", "TabRow");
   const item = cls("LibraryItemBox");
+  const hot = [`${item}:hover`, `${item}.gpfocus`];
+  // Side of the cut-away corner, in design px.
+  const cut = 14;
   // Design focus ring (3 px padding + 3 px white) at Steam scale.
   const ring = "0 0 0 2px var(--vd-bg), 0 0 0 4px var(--vd-ink)";
 
@@ -34,12 +38,27 @@ ${glyphs}:has(img[src*="_l1"])::after, ${glyphs}:has(img[src*="_r1"])::after {
 ${glyphs}:has(img[src*="_l1"])::after { content: "L1"; }
 ${glyphs}:has(img[src*="_r1"])::after { content: "R1"; }
 
-/* Cover art: radius-md corners, no shadows or glow; white focus ring */
-${item} { box-shadow: none !important; border-radius: 11px !important; }
-${item} ${cls("Capsule", "CapsuleVisible")} { border-radius: 11px !important; overflow: hidden !important; filter: grayscale(1) !important; transition: filter 150ms ease !important; }
-${item}:hover ${cls("Capsule", "CapsuleVisible")}, ${item}.gpfocus ${cls("Capsule", "CapsuleVisible")} { filter: none !important; }
+/* Cover art: hard corners, no shadows or glow */
+${item} { box-shadow: none !important; border-radius: 0 !important; }
+${item} ${cls("Capsule", "CapsuleVisible")} { border-radius: 0 !important; overflow: hidden !important; filter: grayscale(1) !important; transition: filter 150ms ease !important; }
+${join(hot)} ${cls("Capsule", "CapsuleVisible")} { filter: none !important; }
 html[data-vd-bw="off"] ${item} ${cls("Capsule", "CapsuleVisible")} { filter: none !important; }
-${item}.gpfocus { outline: none !important; box-shadow: ${ring} !important; }
+
+/* Focus frame: the top-right corner is cut away and the frame is drawn as five background
+   strips inside the clipped box, so the border turns the corner along the cut. */
+${join(hot)} {
+  outline: none !important; box-shadow: none !important; position: relative !important;
+  clip-path: polygon(0 0, calc(100% - ${cut}px) 0, 100% ${cut}px, 100% 100%, 0 100%) !important;
+}
+${join(hot, "::after")} {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(var(--vd-ink), var(--vd-ink)) 0 0 / 100% 1.5px no-repeat,
+    linear-gradient(var(--vd-ink), var(--vd-ink)) 0 100% / 100% 1.5px no-repeat,
+    linear-gradient(var(--vd-ink), var(--vd-ink)) 0 0 / 1.5px 100% no-repeat,
+    linear-gradient(var(--vd-ink), var(--vd-ink)) 100% 0 / 1.5px 100% no-repeat,
+    linear-gradient(to top right, transparent calc(50% - 1.5px), var(--vd-ink) calc(50% - 1.5px) 50%, transparent 50%) 100% 0 / ${cut}px ${cut}px no-repeat;
+}
 ${cls("LibraryImageBackgroundGlow")} { display: none !important; }
 `;
 }
