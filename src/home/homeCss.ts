@@ -25,23 +25,40 @@ export const homeCss = `
 .vd-grid { display: grid; grid-template-columns: repeat(var(--vd-grid-columns), var(--vd-tile-width)); column-gap: var(--vd-grid-gap); row-gap: var(--vd-space-2); }
 .vd-home.is-compact { --vd-tile-width: 124px; --vd-grid-columns: 8; --vd-grid-gap: var(--vd-space-4); }
 
-/* Tabs L1 / R1 */
+/* Tabs L1 / R1 — hard corners with the top-right corner cut.
+   A clip-path removes borders and outer focus rings, so every frame here (and on the
+   hero buttons below) is drawn as background strips inside the clipped box instead. */
 .vd-tabs { display: flex; flex: none; align-items: center; gap: var(--vd-space-3); }
 .vd-trigger {
   display: inline-grid; place-items: center; min-width: 40px; height: 28px; padding: 0 6px; box-sizing: border-box;
-  border: 1.5px solid var(--vd-line-strong); border-radius: var(--vd-radius-pill);
+  position: relative; border: 1.5px solid transparent; border-radius: 0;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+  --vd-cut: 10px; --vd-frame: var(--vd-line-strong);
   font: 700 13px/1 var(--vd-font-mono); color: var(--vd-ink);
 }
 .vd-tabs .vd-trigger:first-child { margin-right: var(--vd-space-3); }
 .vd-tabs .vd-trigger:last-child { margin-left: var(--vd-space-3); }
 .vd-tab {
   height: 36px; padding: 0 var(--vd-space-4); display: inline-flex; align-items: center;
-  border-radius: var(--vd-radius-pill); color: var(--vd-ink-muted);
+  position: relative; border-radius: 0;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+  --vd-cut: 10px; --vd-frame: transparent; color: var(--vd-ink-muted);
   font: 14px/16px var(--vd-font-mono); letter-spacing: .08em; text-transform: uppercase;
 }
 .vd-tab.is-active { background: var(--vd-ink); color: var(--vd-on-ink); }
-.vd-tab.is-focused { box-shadow: var(--vd-focus-ring); color: var(--vd-ink); }
-.vd-tab.is-active.is-focused { color: var(--vd-on-ink); box-shadow: var(--vd-focus-ring); }
+.vd-tab.is-focused { color: var(--vd-ink); --vd-frame: var(--vd-ink); }
+.vd-tab.is-active.is-focused { color: var(--vd-on-ink); --vd-frame: var(--vd-on-ink); }
+
+/* Frame strips: four edges plus a diagonal that turns the chamfered corner. */
+.vd-tab::after, .vd-trigger::after, .vd-btn::after, .vd-empty-library::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(var(--vd-frame), var(--vd-frame)) 0 0 / 100% 1.5px no-repeat,
+    linear-gradient(var(--vd-frame), var(--vd-frame)) 0 100% / 100% 1.5px no-repeat,
+    linear-gradient(var(--vd-frame), var(--vd-frame)) 0 0 / 1.5px 100% no-repeat,
+    linear-gradient(var(--vd-frame), var(--vd-frame)) 100% 0 / 1.5px 100% no-repeat,
+    linear-gradient(to top right, transparent calc(50% - .75px), var(--vd-frame) calc(50% - .75px) calc(50% + .75px), transparent calc(50% + .75px)) 100% 0 / var(--vd-cut) var(--vd-cut) no-repeat;
+}
 
 /* Juego destacado */
 .vd-hero { position: relative; flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 14px; min-height: 0; }
@@ -160,10 +177,12 @@ export const homeCss = `
 .vd-empty-description { position: relative; max-width: 440px; margin: 0; color: var(--vd-ink-muted); font: 16px/24px var(--vd-font-sans); }
 .vd-empty-library {
   display: inline-flex; align-items: center; justify-content: center; width: max-content; height: 42px; padding: 0 var(--vd-space-5, 20px);
-  border: 1.5px solid var(--vd-line-strong); border-radius: var(--vd-radius-pill); color: var(--vd-ink);
+  position: relative; border: 1.5px solid transparent; border-radius: 0;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+  --vd-cut: 10px; --vd-frame: var(--vd-line-strong); color: var(--vd-ink);
   font: 500 15px/1 var(--vd-font-sans); transition: background 150ms ease, color 150ms ease;
 }
-.vd-empty-library.is-focused { background: var(--vd-ink); color: var(--vd-on-ink); box-shadow: var(--vd-focus-ring); }
+.vd-empty-library.is-focused { background: var(--vd-ink); color: var(--vd-on-ink); --vd-frame: var(--vd-on-ink); }
 .vd-meta { display: flex; gap: var(--vd-space-6); align-items: center; font: 16px/24px var(--vd-font-sans); color: var(--vd-ink-muted); }
 .vd-meta b { color: var(--vd-ink); font-weight: 500; }
 .vd-actions { display: flex; gap: var(--vd-space-4); }
@@ -171,13 +190,17 @@ export const homeCss = `
 /* Botones */
 .vd-btn {
   display: inline-flex; align-items: center; gap: var(--vd-space-2); height: 48px; box-sizing: border-box;
-  padding: 0 var(--vd-space-6) 0 var(--vd-space-4); border-radius: var(--vd-radius-pill);
+  padding: 0 var(--vd-space-6) 0 var(--vd-space-4); border-radius: 0;
+  position: relative;
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+  --vd-cut: 14px; --vd-frame: transparent;
   border: 1.5px solid transparent; font: 500 16px/1 var(--vd-font-sans);
   transition: transform 150ms ease;
 }
 .vd-btn-primary { background: var(--vd-ink); color: var(--vd-on-ink); }
-.vd-btn-secondary { background: transparent; color: var(--vd-ink); border-color: var(--vd-line-strong); }
-.vd-btn.is-focused { box-shadow: var(--vd-focus-ring); transform: scale(1.04); }
+.vd-btn-secondary { background: transparent; color: var(--vd-ink); border-color: transparent; --vd-frame: var(--vd-line-strong); }
+.vd-btn.is-focused { --vd-frame: var(--vd-ink); transform: scale(1.04); }
+.vd-btn-primary.is-focused { --vd-frame: var(--vd-on-ink); }
 .vd-btn-glyph {
   display: inline-grid; place-items: center; width: 24px; height: 24px; box-sizing: border-box;
   border-radius: var(--vd-radius-pill); border: 1.5px solid currentColor; font: 700 12px/1 var(--vd-font-mono);
