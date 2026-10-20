@@ -52,11 +52,13 @@ ${join(of("HeaderBackgroundImage"), " img")} { object-fit: cover !important; }
 /* The artwork prints as a dot screen: desaturated like the library capsules, then covered by the
    same 8px lattice as the rest of the interface, so the hero reads as halftone rather than as a photo. */
 ${join(hero)} { filter: grayscale(1) contrast(1.06) brightness(.9) !important; }
+html[data-vd-bw="off"] ${join(hero)} { filter: none !important; }
 ${join(hero, "::after")} {
   content: ""; position: absolute; inset: 0; pointer-events: none;
   background-image: radial-gradient(circle, var(--vd-bg) 2px, transparent 2.25px);
   background-size: 8px 8px; opacity: .55;
 }
+html[data-vd-bw="off"] ${join(hero, "::after")} { display: none !important; }
 ${join(of("ScrollContainer", "Glassy").flatMap((s) => of("Glassy", "ScrollContainer").map((g) => s + g)))} {
   background: var(--vd-bg) !important; background-image: none !important;
 }

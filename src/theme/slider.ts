@@ -32,11 +32,11 @@ ${control} { display: flex !important; align-items: center !important; gap: 10px
 /* Track: a thin grey bar; the filled part is drawn by Steam as a ::before or a child */
 ${track} {
   flex: 1 1 auto !important; height: 4px !important; min-height: 4px !important;
-  border-radius: 999px !important; box-shadow: none !important; border: 0 !important;
+  border-radius: 0 !important; box-shadow: none !important; border: 0 !important;
   background-color: var(--vd-line) !important; background-image: none !important;
 }
 ${track}::before, ${track} > :not(${iconBox}) {
-  height: 100% !important; border-radius: 999px !important; box-shadow: none !important;
+  height: 100% !important; border-radius: 0 !important; box-shadow: none !important;
   background-color: var(--vd-ink) !important; background-image: none !important;
 }
 
