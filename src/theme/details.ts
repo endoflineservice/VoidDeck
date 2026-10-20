@@ -15,6 +15,14 @@ export function detailsCss(): string {
   const value = of("PlayBarDetailLabel");
   const section = of("AppDetailsSectionContainer");
   const post = of("PostButton");
+  const hero = of("HeaderBackgroundImage");
+  const statRow = of("GameStatRight", "PlayBarLabel");
+  const progress = of("DetailsProgressContainer", "DetailsProgressBar");
+  const progressFill = of("DetailsProgressBar", "DetailsProgressContainer");
+  const tab = of("Tab", "TabTitle");
+  const tabTitle = of("TabTitle", "Tab");
+  const selected = of("Selected", "Tab");
+  const activeTabLabel = tab.flatMap((t) => selected.flatMap((s) => tabTitle.map((title) => `${t}${s} ${title}`)));
   const ring = "0 0 0 2px var(--vd-bg), 0 0 0 4px var(--vd-ink)";
   const mono = "font-family: var(--vd-font-mono) !important; font-weight: 400 !important; font-size: 9px !important; letter-spacing: .08em !important; color: var(--vd-ink-muted) !important;";
 
@@ -28,6 +36,14 @@ ${join(of("PlaySection"))} { background: transparent !important; }
 ${join(capsule)} { position: relative; height: calc(100vh - 120px) !important; }
 ${join([...of("HeaderBackgroundImage"), ...of("HeaderBackgroundImage").map((s) => s + " img")])} { height: 100% !important; }
 ${join(of("HeaderBackgroundImage"), " img")} { object-fit: cover !important; }
+/* The artwork prints as a dot screen: desaturated like the library capsules, then covered by the
+   same 8px lattice as the rest of the interface, so the hero reads as halftone rather than as a photo. */
+${join(hero)} { filter: grayscale(1) contrast(1.06) brightness(.9) !important; }
+${join(hero, "::after")} {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background-image: radial-gradient(circle, var(--vd-bg) 2px, transparent 2.25px);
+  background-size: 8px 8px; opacity: .55;
+}
 ${join(of("ScrollContainer", "Glassy").flatMap((s) => of("Glassy", "ScrollContainer").map((g) => s + g)))} {
   background: var(--vd-bg) !important; background-image: none !important;
 }
@@ -41,6 +57,13 @@ ${join(capsule, "::after")} {
 ${join([...tabRow, ...tabRow.map((s) => s + "::before"), ...tabRow.map((s) => s + "::after")])} {
   background: var(--vd-bg) !important; background-image: none !important; backdrop-filter: none !important;
 }
+/* Tabs read as instrument labels: uppercase mono, with the active one underlined in dots. */
+${join([...tabTitle, ...tabTitle.map((s) => s + " *")])} {
+  font-family: var(--vd-font-mono) !important; font-weight: 400 !important; font-size: 9px !important;
+  letter-spacing: .14em !important; text-transform: uppercase !important;
+}
+${join(activeTabLabel)} { color: var(--vd-ink) !important; border-bottom: 1px dotted var(--vd-ink) !important; padding-bottom: 3px !important; }
+${join(tab, ".gpfocus")} { box-shadow: none !important; outline: 1px dotted var(--vd-ink) !important; outline-offset: 2px !important; }
 
 /* Play button: white pill with the concept's (A); the focus ring surrounds the entire pill */
 ${join(container)} { background: transparent !important; border-radius: 999px !important; }
@@ -79,8 +102,39 @@ ${join([...value, ...value.map((s) => s + " *")])} {
   font-family: var(--vd-font-dot) !important; font-weight: 800 !important; font-size: 17px !important; color: var(--vd-ink) !important;
 }
 
+/* Stats read as a spec sheet: small-caps label, dotted leader, right-aligned dot-matrix value.
+   GameStatRight is the div Steam wraps around PlayBarLabel + PlayBarDetailLabel. */
+${join(statRow)} { display: flex !important; align-items: baseline !important; gap: 8px !important; }
+${join(statRow.map((s) => `${s} > :first-child`))} {
+  display: flex !important; align-items: baseline !important; gap: 8px !important;
+  flex: 0 1 auto !important; white-space: nowrap !important;
+}
+${join(statRow.map((s) => `${s} > :first-child::after`))} {
+  content: ""; flex: 1 1 12px; min-width: 16px; align-self: center;
+  border-bottom: 1px dotted var(--vd-line-strong);
+}
+${join(statRow.map((s) => `${s} > :last-child`))} { margin-left: auto !important; text-align: right !important; }
+
+/* Progress reads as a segmented dot meter: a dotted track with the fill cut into 4px segments. */
+${join(progress)} {
+  background-color: transparent !important;
+  background-image: radial-gradient(circle, var(--vd-line-strong) 1.5px, transparent 1.75px) !important;
+  background-size: 8px 8px !important; background-position: 4px 50% !important; background-repeat: repeat !important;
+  border-radius: 0 !important; box-shadow: none !important; overflow: hidden !important;
+}
+${join(progressFill)} {
+  border-radius: 0 !important;
+  -webkit-mask-image: repeating-linear-gradient(90deg, transparent 0 2px, #000 2px 6px, transparent 6px 8px) !important;
+  mask-image: repeating-linear-gradient(90deg, transparent 0 2px, #000 2px 6px, transparent 6px 8px) !important;
+}
+
 /* Sections (friends, activity, events) on a thin-lined surface */
-${join(section)} { background: var(--vd-surface) !important; border: 1px solid var(--vd-line) !important; border-radius: 11px !important; }
+${join(section)} { background: transparent !important; border: 1px solid var(--vd-line) !important; border-radius: 0 !important; position: relative !important; }
+${join(section, "::before")} {
+  content: ""; position: absolute; top: 12px; right: 12px; width: 20px; height: 4px; pointer-events: none;
+  background-image: radial-gradient(circle, var(--vd-ink-muted) 1.5px, transparent 1.75px);
+  background-size: 8px 4px; background-repeat: repeat-x; background-position: 0 50%;
+}
 ${join([...of("FriendsSectionSubHeading"), ...of("SectionHeader")])} { ${mono} }
 ${join([...of("PartnerEventMediumImage_Container"), ...of("PartnerEvent", "PartnerEventMediumImage_Container")])} {
   background: var(--vd-surface) !important; background-image: none !important; border-radius: 11px !important;
