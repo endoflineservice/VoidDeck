@@ -23,8 +23,21 @@ export function detailsCss(): string {
   const tabTitle = of("TabTitle", "Tab");
   const selected = of("Selected", "Tab");
   const activeTabLabel = tab.flatMap((t) => selected.flatMap((s) => tabTitle.map((title) => `${t}${s} ${title}`)));
-  const ring = "0 0 0 2px var(--vd-bg), 0 0 0 4px var(--vd-ink)";
   const mono = "font-family: var(--vd-font-mono) !important; font-weight: 400 !important; font-size: 9px !important; letter-spacing: .08em !important; color: var(--vd-ink-muted) !important;";
+  // Same chamfer as the library posters: the top-right corner is sliced off at 45°.
+  const cut = 14;
+  const notch = 10;
+  const chamfer = (px: number) => `polygon(0 0, calc(100% - ${px}px) 0, 100% ${px}px, 100% 100%, 0 100%)`;
+  // Frames are five background strips inside the clipped box, so the stroke turns along the cut (a
+  // clip-path would otherwise cut away the border and any outer focus ring).
+  const frame = (px: number, width: number, inset = 0) => `
+  content: ""; position: absolute; inset: ${inset}px; pointer-events: none;
+  background:
+    linear-gradient(var(--vd-frame), var(--vd-frame)) 0 0 / 100% ${width}px no-repeat,
+    linear-gradient(var(--vd-frame), var(--vd-frame)) 0 100% / 100% ${width}px no-repeat,
+    linear-gradient(var(--vd-frame), var(--vd-frame)) 0 0 / ${width}px 100% no-repeat,
+    linear-gradient(var(--vd-frame), var(--vd-frame)) 100% 0 / ${width}px 100% no-repeat,
+    linear-gradient(to top right, transparent calc(50% - ${width / 2}px), var(--vd-frame) calc(50% - ${width / 2}px) 50%, transparent 50%) 100% 0 / ${px}px ${px}px no-repeat;`;
 
   return `
 /* Void first: no blurred copy of the header behind the entire page */
@@ -65,11 +78,16 @@ ${join([...tabTitle, ...tabTitle.map((s) => s + " *")])} {
 ${join(activeTabLabel)} { color: var(--vd-ink) !important; border-bottom: 1px dotted var(--vd-ink) !important; padding-bottom: 3px !important; }
 ${join(tab, ".gpfocus")} { box-shadow: none !important; outline: 1px dotted var(--vd-ink) !important; outline-offset: 2px !important; }
 
-/* Play button: white pill with the concept's (A); the focus ring surrounds the entire pill */
-${join(container)} { background: transparent !important; border-radius: 999px !important; }
-${join(container, ":has(.gpfocus)")} { box-shadow: ${ring} !important; }
-${join(play)} { background: var(--vd-ink) !important; color: var(--vd-on-ink) !important; border-radius: 999px 0 0 999px !important; gap: 8px; }
-${join(play, ":only-child")} { border-radius: 999px !important; }
+/* Play button: a rectangle with the top-right corner cut, matching the poster frames. The clip sits on
+   the container so Play and the streaming selector form one shape; the focus frame is drawn inside it. */
+${join(container)} {
+  --vd-frame: var(--vd-on-ink);
+  background: transparent !important; border-radius: 0 !important; position: relative !important;
+  clip-path: ${chamfer(cut)} !important;
+}
+${join(container, ":has(.gpfocus)::after")} { ${frame(cut, 2, 2)} }
+${join(play)} { background: var(--vd-ink) !important; color: var(--vd-on-ink) !important; border-radius: 0 !important; gap: 8px; }
+${join(play, ":only-child")} { border-radius: 0 !important; }
 ${join(play, " *")} { color: var(--vd-on-ink) !important; }
 ${join(play, " svg")} { display: none !important; }
 ${join(play, "::before")} {
@@ -78,23 +96,27 @@ ${join(play, "::before")} {
 }
 ${join(selector)} {
   background: var(--vd-ink) !important; color: var(--vd-on-ink) !important;
-  border-radius: 0 999px 999px 0 !important; border-left: 1px solid rgba(0, 0, 0, .2) !important;
+  border-radius: 0 !important; border-left: 1px solid rgba(0, 0, 0, .2) !important;
 }
 ${join(selector, " svg")} { fill: var(--vd-on-ink) !important; color: var(--vd-on-ink) !important; }
 ${join([...play, ...selector], ".gpfocus")} { box-shadow: none !important; outline: none !important; }
 
-/* Controller and settings: outlined circles that invert on hover, like the Play button.
+/* Controller and settings: outlined rectangles with the corner cut, inverting on hover, like the Play button.
    The class is repeated so these rules outrank Steam's own (more specific) fill on the glyph. */
-${join(menuButton)} { background: transparent !important; border: 1px solid var(--vd-line-strong) !important; border-radius: 50% !important; box-sizing: border-box !important; color: var(--vd-ink) !important; }
+${join(menuButton)} {
+  --vd-frame: var(--vd-line-strong);
+  background: transparent !important; border: 0 !important; border-radius: 0 !important; position: relative !important;
+  box-sizing: border-box !important; color: var(--vd-ink) !important; clip-path: ${chamfer(notch)} !important;
+}
+${join(menuButton, "::after")} { ${frame(notch, 1)} }
 ${join(paint(menuButton, " svg"))} { color: var(--vd-ink) !important; fill: var(--vd-ink) !important; }
 ${join(paint(menuButton, " svg *"))} { color: var(--vd-ink) !important; fill: var(--vd-ink) !important; }
-${join(paint(menuButton, ":hover"))} { background: var(--vd-ink) !important; border-color: var(--vd-ink) !important; color: var(--vd-on-ink) !important; }
-${join(paint(menuButton, ".gpfocus"))} { background: var(--vd-ink) !important; border-color: var(--vd-ink) !important; color: var(--vd-on-ink) !important; }
+${join(paint(menuButton, ":hover"))} { --vd-frame: var(--vd-ink); background: var(--vd-ink) !important; color: var(--vd-on-ink) !important; }
+${join(paint(menuButton, ".gpfocus"))} { --vd-frame: var(--vd-ink); background: var(--vd-ink) !important; color: var(--vd-on-ink) !important; }
 ${join(paint(menuButton, ":hover svg"))} { color: var(--vd-on-ink) !important; fill: var(--vd-on-ink) !important; }
 ${join(paint(menuButton, ":hover svg *"))} { color: var(--vd-on-ink) !important; fill: var(--vd-on-ink) !important; }
 ${join(paint(menuButton, ".gpfocus svg"))} { color: var(--vd-on-ink) !important; fill: var(--vd-on-ink) !important; }
 ${join(paint(menuButton, ".gpfocus svg *"))} { color: var(--vd-on-ink) !important; fill: var(--vd-on-ink) !important; }
-${join(menuButton, ".gpfocus")} { box-shadow: ${ring} !important; }
 
 /* Last session / playtime: monospaced label and dot-matrix value */
 ${join([...label, ...label.map((s) => s + " *")])} { ${mono} }
@@ -140,8 +162,13 @@ ${join([...of("PartnerEventMediumImage_Container"), ...of("PartnerEvent", "Partn
   background: var(--vd-surface) !important; background-image: none !important; border-radius: 11px !important;
 }
 ${join(of("Rule", "PartnerEvent"))} { background: var(--vd-line) !important; background-image: none !important; }
-${join(of("PostTextEntryArea"))} { background: var(--vd-surface-raised) !important; border-radius: 8px !important; }
-${join(post)} { background: transparent !important; border: 1px solid var(--vd-line-strong) !important; border-radius: 999px !important; color: var(--vd-ink) !important; box-shadow: none !important; }
-${join(post, ".gpfocus")} { box-shadow: ${ring} !important; border-color: var(--vd-ink) !important; }
+${join(of("PostTextEntryArea"))} { background: var(--vd-surface-raised) !important; border-radius: 0 !important; }
+${join(post)} {
+  --vd-frame: var(--vd-line-strong);
+  background: transparent !important; border: 0 !important; border-radius: 0 !important; position: relative !important;
+  color: var(--vd-ink) !important; box-shadow: none !important; clip-path: ${chamfer(notch)} !important;
+}
+${join(post, "::after")} { ${frame(notch, 1)} }
+${join(post, ".gpfocus")} { --vd-frame: var(--vd-ink); box-shadow: none !important; }
 `;
 }
