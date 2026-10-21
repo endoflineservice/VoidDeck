@@ -11,6 +11,8 @@ export interface Game {
   lastPlayed: number;
   /** 0 unknown, 1 unsupported, 2 playable, 3 verified. */
   deckCompat: number;
+  /** Steam offers a controller configurator for this game. */
+  controllerConfig: boolean;
   /** Candidate 2:3 covers, in descending preference. */
   covers: string[];
 }
@@ -38,6 +40,7 @@ function toGame(app: any): Game {
     minutes: app.minutes_playtime_forever ?? 0,
     lastPlayed: app.rt_last_time_played ?? 0,
     deckCompat: (app.steam_hw_compat_category_packed ?? 0) & 3,
+    controllerConfig: app.bShowControllerConfig ?? false,
     covers,
   };
 }
@@ -72,4 +75,23 @@ export function openDetails(game: Game): void {
 
 export function openProperties(game: Game): void {
   stores().SteamClient?.Apps?.OpenAppSettingsDialog(game.appid, "general");
+}
+
+/**
+ * SteamGridDB's own artwork manager. The plugin registers the /steamgriddb route
+ * when it loads, and its own menu item opens that route, so Void Deck opens the
+ * same one instead of reaching into the plugin.
+ */
+export function openArtworkPicker(game: Game): void {
+  Navigation.Navigate(`/steamgriddb/${game.appid}`);
+}
+
+/** Steam's controller configurator for one game. */
+export function openControllerConfig(game: Game): void {
+  stores().SteamClient?.Apps?.ShowControllerConfigurator(game.appid);
+}
+
+/** Steam's uninstall wizard, the same one the library's Manage menu opens. */
+export function uninstallGame(game: Game): void {
+  stores().SteamClient?.Installs?.OpenUninstallWizard([game.appid], false);
 }

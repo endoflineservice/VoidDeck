@@ -33,6 +33,12 @@ STATE_DIR = Path.home() / ".steam" / "root" / "config" / "uioverrides" / "voidde
 MARKER = STATE_DIR / "installed"
 BACKUP_MOVIE = STATE_DIR / "deck_startup.webm.bak"
 
+# Decky installs every plugin as its own folder here. Void Deck replaces
+# Steam's Home screen, and with it the entries other plugins add to Steam's
+# game menu, so the frontend needs to know which plugins are installed before
+# it can put those entries back.
+PLUGINS_DIR = Path.home() / "homebrew" / "plugins"
+
 
 def _movie_is_ours(path: Path) -> bool:
     """True when the file on disk is still the exact movie Void Deck installed.
@@ -84,6 +90,24 @@ class Plugin:
 
     async def _unload(self):
         decky.logger.info("Void Deck unloaded")
+
+    async def list_plugins(self) -> dict:
+        """List the Decky plugins installed on this Deck.
+
+        Void Deck replaces Steam's Home screen, and with it the entries other
+        plugins add to Steam's game menu. Knowing which plugins are installed
+        lets Void Deck offer those entries itself.
+        """
+        if not PLUGINS_DIR.is_dir():
+            return {"success": True, "plugins": []}
+
+        try:
+            names = sorted(entry.name for entry in PLUGINS_DIR.iterdir() if entry.is_dir())
+        except OSError as error:
+            decky.logger.error(f"Void Deck could not read the plugin folder: {error}")
+            return {"success": False, "error": str(error)}
+
+        return {"success": True, "plugins": names}
 
     async def boot_animation_status(self) -> dict:
         """Report whether the startup movie is currently installed by Void Deck."""

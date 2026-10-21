@@ -1,12 +1,13 @@
 // Layer 2: Void Deck's Home screen. Measurements are in design pixels (1280×800);
 // the container scales to the actual CSS size of the Steam window.
-import { Focusable, GamepadButton, Menu, MenuItem, Navigation, QuickAccessTab, showContextMenu, type GamepadEvent } from "@decky/ui";
+import { Focusable, GamepadButton, Menu, MenuGroup, MenuItem, Navigation, QuickAccessTab, showContextMenu, type GamepadEvent } from "@decky/ui";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState, type RefObject } from "react";
 import { strings, useLanguage, type Language } from "../i18n";
 import { skinState } from "../skin";
 import { useSettings } from "../settings";
 import { cls } from "../steam/classes";
-import { installedGames, libraryCount, openDetails, openProperties, playGame, recentGames, type Game } from "../steam/library";
+import { installedGames, libraryCount, openArtworkPicker, openControllerConfig, openDetails, openProperties, playGame, recentGames, uninstallGame, type Game } from "../steam/library";
+import { hasSteamGridDb, installedPlugins } from "../steam/plugins";
 import { fontsCss } from "../theme/fonts";
 import { tokensCss } from "../theme/tokens";
 import { FROM_HOME_ATTR, FROM_HOME_MS, FROM_HOME_VALUE } from "../theme/transitions";
@@ -293,21 +294,40 @@ function Cover({ game }: { game: Game }) {
   );
 }
 
+// Steam's menu group is what turns a label into a submenu. It comes from the
+// Steam client build, so it is skipped when the client does not expose it.
+const hasMenuGroup = typeof MenuGroup === "function";
+
 /** The native game menu lived in Steam Home, which Void Deck replaces; this rebuilds it. */
-function openTileMenu(game: Game, language: Language, parent: HTMLElement | null): void {
+function openTileMenu(game: Game, language: Language, parent: HTMLElement | null, changeArtwork: boolean): void {
   const copy = strings(language);
   showContextMenu(
     <Menu label={game.name}>
       <MenuItem onClick={() => playGame(game)}>{copy.play}</MenuItem>
       <MenuItem onClick={() => openDetails(game)}>{copy.details}</MenuItem>
+      {changeArtwork && <MenuItem onClick={() => openArtworkPicker(game)}>{copy.changeArtwork}</MenuItem>}
       <MenuItem onClick={() => openProperties(game)}>{copy.properties}</MenuItem>
+      {hasMenuGroup && (
+        <MenuGroup label={copy.manage}>
+          {game.controllerConfig && (
+            <MenuItem onClick={() => openControllerConfig(game)}>{copy.controllerConfiguration}</MenuItem>
+          )}
+          <MenuItem onClick={() => uninstallGame(game)}>{copy.uninstall}</MenuItem>
+        </MenuGroup>
+      )}
     </Menu>,
     parent ?? undefined,
   );
 }
 
-function Tile(props: { game: Game; first?: boolean; language: Language; onFocus: (el: HTMLDivElement) => void }) {
-  const { game, first, language, onFocus } = props;
+function Tile(props: {
+  game: Game;
+  first?: boolean;
+  language: Language;
+  changeArtwork: boolean;
+  onFocus: (el: HTMLDivElement) => void;
+}) {
+  const { game, first, language, changeArtwork, onFocus } = props;
   const ref = useRef<HTMLDivElement>(null);
   const focus = () => ref.current && onFocus(ref.current);
   return (
@@ -321,7 +341,7 @@ function Tile(props: { game: Game; first?: boolean; language: Language; onFocus:
       onSecondaryButton={() => openDetails(game)}
       onOKActionDescription={strings(language).play}
       onSecondaryActionDescription={strings(language).details}
-      onMenuButton={() => openTileMenu(game, language, ref.current)}
+      onMenuButton={() => openTileMenu(game, language, ref.current, changeArtwork)}
       onMenuActionDescription={strings(language).menu}
       onGamepadFocus={focus}
       onFocus={focus}
@@ -423,6 +443,19 @@ export function HomeScreen() {
   const recent = useMemo(() => recentGames(SHELF_SIZE), [artTick]);
   const installed = useMemo(() => installedGames(), [artTick]);
   const total = useMemo(() => libraryCount(), [artTick]);
+  // SteamGridDB adds a "Change artwork" entry to Steam's game menu, but that menu
+  // lives in Steam Home, which Void Deck replaces. Ask the backend which plugins
+  // are installed so Void Deck can offer the same entry itself.
+  const [artworkPlugin, setArtworkPlugin] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    installedPlugins().then((plugins) => {
+      if (alive) setArtworkPlugin(hasSteamGridDb(plugins));
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
   // The hero is held by appid so it survives a refresh and picks up new art.
   const [heroId, setHeroId] = useState<number | undefined>(() => (recent[0] ?? installed[0])?.appid);
   const hero = useMemo(() => {
@@ -520,6 +553,7 @@ export function HomeScreen() {
                       game={g}
                       first={i === 0}
                       language={language}
+                      changeArtwork={artworkPlugin}
                       onFocus={() => {
                         setHeroId((current) => (current === g.appid ? current : g.appid));
                         scroll.toTop();
@@ -543,6 +577,7 @@ export function HomeScreen() {
                     key={g.appid}
                     game={g}
                     language={language}
+                    changeArtwork={artworkPlugin}
                     onFocus={(el) => {
                       setHeroId((current) => (current === g.appid ? current : g.appid));
                       scroll.reveal(el);
