@@ -6,6 +6,7 @@ import { fontsCss } from "./fonts";
 import { footerCss } from "./footer";
 import { keyboardCss } from "./keyboard";
 import { libraryCss } from "./library";
+import { lockScreenCss } from "./lockScreen";
 import { mainMenuCss } from "./mainMenu";
 import { contextMenuCss, menusCss } from "./menus";
 import { quickAccessCss } from "./quickAccess";
@@ -81,6 +82,9 @@ ${transitionsCss()}
 
 /* Game details */
 ${detailsCss()}
+
+/* Lock screen (PIN entry) */
+${lockScreenCss()}
 
 /* Library and tabbed pages */
 ${libraryCss()}
