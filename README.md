@@ -35,6 +35,11 @@ only changes how Steam looks, never how it works.
 letters, Space Mono for the modifier words and a dot-grid text line. The focused key inverts to solid ink, so you
 always know where you are typing.
 
+**A startup movie of its own.** The boot video is the one moment the interface is still dark, so Void Deck brings
+its own: the CtOS sequence from *Watchdogs* — dots folding into shapes, a retro loading bar, and the hexagon logo.
+1280×800, eight seconds, silent. It is installed with one switch in the panel, and a movie you had before is kept
+aside so you can put it back at any time.
+
 ## Installation
 
 You need [Decky Loader](https://decky.xyz) installed on your Steam Deck.
@@ -68,6 +73,7 @@ In Quick Access, Decky tab → **Void Deck**:
   turn it off.
 - **Light theme**: inverted colors for outdoor use.
 - **Language**: select English (the default) or Spanish. The selector is ready for more languages in future releases.
+- **Startup movie**: replace the Deck's boot video with the CtOS sequence. Switching it off puts your own movie back.
 - **Reset to defaults**: restore English, the dark theme and both screens enabled.
 - **Version**: shows the installed plugin version, offers updates when a newer one exists, and opens the latest
   release notes.
@@ -107,6 +113,10 @@ software engineer, I test each change on my own Steam Deck and review the code b
 SIL Open Font License 1.1: see [`third_party/fonts`](third_party/fonts). Controller prompt assets are from
 [Kenney Input Prompts](https://kenney.nl/assets/input-prompts), licensed CC0; see
 [`third_party/KENNEY-INPUT-PROMPTS-CC0.txt`](third_party/KENNEY-INPUT-PROMPTS-CC0.txt).
+
+The bundled startup movie is derived from the fan-made
+[Watchdogs Boot Animation](https://github.com/ShorterKing/Watchdogs-Boot-Animation) by Akshat Singh, licensed
+GPL-3.0: see [`third_party/CTOS-BOOT-ANIMATION.md`](third_party/CTOS-BOOT-ANIMATION.md).
 
 ## Built with
 

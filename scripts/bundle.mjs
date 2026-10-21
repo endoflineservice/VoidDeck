@@ -4,7 +4,9 @@ import { cpSync, existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import { root } from "./deck.mjs";
 
-const FILES = ["dist", "plugin.json", "package.json", "main.py", "LICENSE", "README.md", "third_party"];
+// The "assets" folder holds the files the Python backend copies out at runtime
+// (the startup movie), so it has to travel with the plugin.
+const FILES = ["dist", "assets", "plugin.json", "package.json", "main.py", "LICENSE", "README.md", "third_party"];
 
 export function pluginName() {
   return JSON.parse(readFileSync(join(root, "plugin.json"), "utf8")).name;

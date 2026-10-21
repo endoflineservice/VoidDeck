@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { toaster } from "@decky/api";
 import { ButtonItem, DropdownItem, Navigation, PanelSection, PanelSectionRow, ToggleField } from "@decky/ui";
+import { useBootAnimation } from "../boot/useBootAnimation";
 import { disableHome, enableHome } from "../home";
 import { resetLanguage, setLanguage, strings, useLanguage, type Language } from "../i18n";
 import { resetSettings, setDotEffect, setHome, setPostersBw, setSkin, useSettings, type DotEffect } from "../settings";
@@ -26,6 +27,7 @@ export function Panel() {
   const language = useLanguage();
   const copy = strings(language);
   const update = useUpdateCheck(VERSION);
+  const boot = useBootAnimation();
   const [installing, setInstalling] = useState(false);
   const [installedVersion, setInstalledVersion] = useState<string | null>(null);
 
@@ -52,6 +54,18 @@ export function Panel() {
     applySkin("dark");
     enableHome();
     applyPosterColor(true);
+  };
+
+  const toggleBootAnimation = async (on: boolean) => {
+    const result = await boot.setInstalled(on);
+    if (!result.success) {
+      toaster.toast({ title: copy.bootAnimationFailedToast, body: result.error ?? copy.bootAnimationFailedToast });
+      return;
+    }
+    toaster.toast({
+      title: on ? copy.bootAnimationInstalledToast : copy.bootAnimationRemovedToast,
+      body: on ? copy.bootAnimationInstalled : result.restored ? copy.bootAnimationRestored : copy.bootAnimationRemoved,
+    });
   };
 
   const runUpdate = async () => {
@@ -142,6 +156,17 @@ export function Panel() {
       <PanelSectionRow>
         <ButtonItem label={copy.resetDefaults} description={copy.resetDefaultsDescription} onClick={resetDefaults} />
       </PanelSectionRow>
+      <PanelSection title={copy.bootAnimation}>
+        <PanelSectionRow>
+          <ToggleField
+            label={copy.bootAnimationToggle}
+            description={boot.installed ? copy.bootAnimationInstalled : copy.bootAnimationDescription}
+            checked={boot.installed ?? false}
+            disabled={boot.busy || boot.installed === null}
+            onChange={(on) => void toggleBootAnimation(on)}
+          />
+        </PanelSectionRow>
+      </PanelSection>
       <PanelSection title={copy.version}>
         {installedVersion ? (
           <PanelSectionRow>

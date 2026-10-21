@@ -1,1 +1,4 @@
 * text=auto eol=lf
+
+# Startup movies are binary media: never let git normalize or check their bytes.
+*.webm binary
