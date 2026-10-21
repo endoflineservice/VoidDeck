@@ -11,7 +11,7 @@ import { type UpdateCheck } from "../update/check";
 import { installUpdate } from "../update/install";
 import { useUpdateCheck } from "../update/useUpdateCheck";
 
-export const VERSION = "1.5.4";
+export const VERSION = "1.6.0";
 export const RELEASE_URL = "https://github.com/endoflineservice/VoidDeck/releases/latest";
 
 /** Status line under the installed version: installed, still checking, check failed, update ready, or up to date. */
