@@ -24,6 +24,27 @@ export function detailsCss(): string {
   const selected = of("Selected", "Tab");
   const activeTabLabel = tab.flatMap((t) => selected.flatMap((s) => tabTitle.map((title) => `${t}${s} ${title}`)));
   const mono = "font-family: var(--vd-font-mono) !important; font-weight: 400 !important; font-size: 9px !important; letter-spacing: .08em !important; color: var(--vd-ink-muted) !important;";
+  // The page's tabs (Game Info, Activity, Community, Your Stuff) are drawn by Steam as white pills, and Steam
+  // paints the hovered label white on that white pill, so the button all but disappears under the cursor.
+  // They are looked up without the sibling filter as well, because more than one Steam panel publishes a
+  // "Tab", and the readable name is what stays stable when the hash changes.
+  const resolved = (list: string[]) => list.filter((selector) => selector !== ".vd-missing");
+  const tabButton = [...new Set([...resolved([...tab, ...clsList("Tab")]), '[class*="Tab_"]'])];
+  const tabLabel = [...new Set([...resolved([...tabTitle, ...clsList("TabTitle")]), '[class*="TabTitle_"]'])];
+  // Every rule below is scoped to the details page: the Library draws its own tabs with the same names and
+  // Void Deck styles those as pills.
+  const detailsRoot = [...new Set([...of("AppDetailsRoot"), ...section, ...capsule])].filter(
+    (selector) => selector !== ".vd-missing",
+  );
+  const inPage = (list: string[], suffix = "") =>
+    detailsRoot.length > 0
+      ? detailsRoot.flatMap((root) => list.map((selector) => `${root} ${selector}${suffix}`))
+      : list.map((selector) => selector + suffix);
+  // The class is repeated so the rule outranks Steam's own, more specific, hover colour.
+  const inPagePaint = (list: string[], suffix = "") =>
+    detailsRoot.length > 0
+      ? detailsRoot.flatMap((root) => list.map((selector) => `${root} ${selector}${selector}${suffix}`))
+      : paint(list, suffix);
   // Same chamfer as the library posters: the top-right corner is sliced off at 45°.
   const cut = 14;
   const notch = 10;
@@ -72,6 +93,29 @@ ${join(capsule, "::after")} {
 ${join([...tabRow, ...tabRow.map((s) => s + "::before"), ...tabRow.map((s) => s + "::after")])} {
   background: var(--vd-bg) !important; background-image: none !important; backdrop-filter: none !important;
 }
+/* The tabs lose Steam's white pill and become the same cut-corner button as the rest of the page: outlined
+   at rest, solid ink under the cursor. The label is painted explicitly, because Steam's own hover colour is
+   white and would otherwise vanish against the pill it came from. */
+${join(inPage(tabButton))} {
+  --vd-frame: var(--vd-line-strong);
+  background: transparent !important; border: 0 !important; border-radius: 0 !important;
+  position: relative !important; box-sizing: border-box !important; box-shadow: none !important;
+  color: var(--vd-ink-muted) !important; clip-path: ${chamfer(notch)} !important;
+}
+${join(inPage(tabButton, "::after"))} { ${frame(notch, 1)} }
+${join(inPage(tabRow, " > *"))} { background: transparent !important; border-radius: 0 !important; }
+${join([...inPage(tabLabel), ...inPage(tabLabel, " *")])} { color: var(--vd-ink-muted) !important; }
+${join([...inPage(activeTabLabel), ...inPage(activeTabLabel, " *")])} { color: var(--vd-ink) !important; }
+${join(inPagePaint(tabButton, ":hover"))} {
+  --vd-frame: var(--vd-ink); background: var(--vd-ink) !important; color: var(--vd-on-ink) !important;
+}
+${join(inPagePaint(tabButton, ".gpfocus"))} {
+  --vd-frame: var(--vd-ink); background: var(--vd-ink) !important; color: var(--vd-on-ink) !important;
+  outline: none !important;
+}
+${join(inPagePaint(tabButton, ":hover *"))} { color: var(--vd-on-ink) !important; }
+${join(inPagePaint(tabButton, ".gpfocus *"))} { color: var(--vd-on-ink) !important; }
+
 /* Tabs read as instrument labels: uppercase mono, with the active one underlined in dots. */
 ${join([...tabTitle, ...tabTitle.map((s) => s + " *")])} {
   font-family: var(--vd-font-mono) !important; font-weight: 400 !important; font-size: 9px !important;

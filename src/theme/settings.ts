@@ -41,6 +41,23 @@ export function settingsCss(): string {
   color: var(--vd-ink) !important;
 }
 
+/* Steam marks the category you are in with a coloured bar on its far-left edge. Void Deck is black and white,
+   so every accent inside the column is normalised to the theme's own lines, and the selected row is given the
+   same ink bar the focused row already has. */
+.PageListColumn :is(.Panel, .Panel *) {
+  border-color: var(--vd-line) !important;
+  box-shadow: none !important;
+}
+.PageListColumn :is(.Panel, .Panel *)::before,
+.PageListColumn :is(.Panel, .Panel *)::after {
+  background-color: transparent !important;
+  background-image: none !important;
+}
+.PageListColumn :is([class*="Selected"], [class*="selected"]) {
+  border-left: 2px solid var(--vd-ink) !important;
+  box-shadow: none !important;
+}
+
 /* Setting rows become a precise ruled form rather than floating cards. */
 ${join(field)} {
   background: var(--vd-bg) !important;
