@@ -34,7 +34,7 @@ opens Quick Access.
 | 1 · Global skin | Injects the design tokens into every Steam window | `src/skin.ts`, `src/theme/` |
 | 2 · Custom screens | Replaces specific routes (Home) with React screens | `src/home/` |
 | 3 · Settings | Panel in Quick Access | `src/qam/` |
-| 4 · Startup movie | Installs the bundled boot video into SteamOS' own configuration | `src/boot/`, `main.py`, `assets/boot/` |
+| 4 · Startup movie | Installs the bundled boot video into SteamOS' own configuration | `src/boot/`, `main.py`, `assets/boot/`, `assets/ui/` |
 
 Steam regenerates its CSS class names in every update, so they are never written by hand:
 `src/steam/classes.ts` resolves them at runtime from their readable name.
@@ -42,7 +42,8 @@ Steam regenerates its CSS class names in every update, so they are never written
 The startup movie is the one thing the browser cannot do on its own: it has to be written into
 `~/.steam/root/config/uioverrides/movies/`, outside the plugin. `main.py` is the Python backend that copies
 the bundled WebM there and puts the user's own movie back; the frontend reaches it through `call()` in
-`src/boot/boot.ts`.
+`src/boot/boot.ts`. The panel also shows the movie as a preview: the small rendition in `assets/ui/` is
+embedded in the bundle by `rollup.config.js`, since the plugin folder is not reachable from Steam's own page.
 
 ## Testing on a Steam Deck
 

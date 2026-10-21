@@ -41,6 +41,24 @@ function inlineButtonAssets() {
   };
 }
 
+// The startup movie preview plays inside the panel, so it has to travel with the
+// bundle. The plugin folder is not reachable from Steam's own page, and the
+// panel may be opened from any origin, so the clip is embedded as a data URL.
+const SPLASH_ASSET = "virtual:voiddeck-splash";
+function inlineSplash() {
+  return {
+    name: "inline-splash",
+    resolveId(id) {
+      return id === SPLASH_ASSET ? id : null;
+    },
+    load(id) {
+      if (id !== SPLASH_ASSET) return null;
+      const clip = readFileSync(new URL("./assets/ui/deck_startup_preview.webm", import.meta.url));
+      return `export const splashUrl = "data:video/webm;base64,${clip.toString("base64")}";`;
+    },
+  };
+}
+
 export default deckyPlugin({
-  plugins: [inlineAssets(), inlineButtonAssets()],
+  plugins: [inlineAssets(), inlineButtonAssets(), inlineSplash()],
 });

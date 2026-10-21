@@ -37,8 +37,8 @@ always know where you are typing.
 
 **A startup movie of its own.** The boot video is the one moment the interface is still dark, so Void Deck brings
 its own: the CtOS sequence from *Watchdogs* — dots folding into shapes, a retro loading bar, and the hexagon logo.
-1280×800, eight seconds, silent. It is installed with one switch in the panel, and a movie you had before is kept
-aside so you can put it back at any time.
+1280×800, five and a half seconds, silent. It is installed with one switch in the panel, where it also plays as a
+preview, and a movie you had before is kept aside so you can put it back at any time.
 
 ## Installation
 
@@ -73,7 +73,8 @@ In Quick Access, Decky tab → **Void Deck**:
   turn it off.
 - **Light theme**: inverted colors for outdoor use.
 - **Language**: select English (the default) or Spanish. The selector is ready for more languages in future releases.
-- **Startup movie**: replace the Deck's boot video with the CtOS sequence. Switching it off puts your own movie back.
+- **Startup movie**: replace the Deck's boot video with the CtOS sequence, which also plays as a preview in the
+  panel. Switching it off puts your own movie back.
 - **Reset to defaults**: restore English, the dark theme and both screens enabled.
 - **Version**: shows the installed plugin version, offers updates when a newer one exists, and opens the latest
   release notes.

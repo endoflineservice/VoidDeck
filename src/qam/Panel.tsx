@@ -3,6 +3,7 @@ import { useState } from "react";
 import { toaster } from "@decky/api";
 import { ButtonItem, DropdownItem, Navigation, PanelSection, PanelSectionRow, ToggleField } from "@decky/ui";
 import { useBootAnimation } from "../boot/useBootAnimation";
+import { StartupMoviePreview } from "../boot/splash";
 import { disableHome, enableHome } from "../home";
 import { resetLanguage, setLanguage, strings, useLanguage, type Language } from "../i18n";
 import { resetSettings, setDotEffect, setHome, setPostersBw, setSkin, useSettings, type DotEffect } from "../settings";
@@ -157,6 +158,7 @@ export function Panel() {
         <ButtonItem label={copy.resetDefaults} description={copy.resetDefaultsDescription} onClick={resetDefaults} />
       </PanelSectionRow>
       <PanelSection title={copy.bootAnimation}>
+        <StartupMoviePreview caption={copy.bootAnimationPreview} />
         <PanelSectionRow>
           <ToggleField
             label={copy.bootAnimationToggle}

@@ -26,9 +26,14 @@ The bundled file was produced by re-encoding the original frames:
 * Scaled to 1280×800 with the Lanczos filter and padded the tail with a 1.5 s hold on the final frame.
 * Decoded the JPEG sequence at 30 fps and encoded the result as VP9 video with a silent Vorbis track
   (`-crf 22`, `-b:v 0`).
+* Trimmed the 8.5 s result down to 5.5 s: the trailing hold was cut away and the silent track was dropped, so
+  the movie the Deck plays is the whole story arc and nothing else.
+
+`assets/ui/deck_startup_preview.webm` is a 480×300 rendition of that same trimmed clip, embedded in the plugin
+so the panel can show the movie as a preview. It reuses the same frames and adds no new artwork.
 
 No artwork, timing, or ordering of the original frames was altered beyond the crop, the scale, the
-frame-rate conversion and the trailing hold.
+frame-rate conversion and the trim.
 
 ## Credit
 
