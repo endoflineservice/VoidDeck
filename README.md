@@ -44,8 +44,8 @@ preview, and a movie you had before is kept aside so you can put it back at any 
 
 You need [Decky Loader](https://decky.xyz) installed on your Steam Deck.
 
-1. Download `VoidDeck-v1.6.0.zip` from the [v1.6.0 release](https://github.com/endoflineservice/VoidDeck/releases/tag/v1.6.0), or copy its direct URL:
-   `https://github.com/endoflineservice/VoidDeck/releases/download/v1.6.0/VoidDeck-v1.6.0.zip`
+1. Download `VoidDeck-v1.7.1.zip` from the [v1.7.1 release](https://github.com/endoflineservice/VoidDeck/releases/tag/v1.7.1), or copy its direct URL:
+   `https://github.com/endoflineservice/VoidDeck/releases/download/v1.7.1/VoidDeck-v1.7.1.zip`
 2. On the Deck, in Game Mode, open Quick Access (the `···` button) → the **Decky** tab (plug icon) → **⚙**.
 3. Under **General**, turn on **Developer mode**.
 4. In the new **Developer** section, choose one of:
