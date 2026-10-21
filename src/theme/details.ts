@@ -5,6 +5,39 @@ import { join, paint } from "./selectors";
 
 export function detailsCss(): string {
   const of = (name: string, ...siblings: string[]) => clsList(name, ...siblings);
+
+// Steam colours the compat badges and platform logos; Void Deck is monochrome,
+// so the artwork loses its hue and the rating text drops to muted ink. Each
+// name below is published by exactly one compat module — no sibling scoping.
+const compatIcon = [
+  ...of("SteamDeckCompatLogo"),
+  ...of("SteamDeckCompatIcon"),
+  ...of("DeckCompatIcon"),
+  ...of("SteamFrameCompatLogo"),
+  ...of("SteamMachineCompatLogo"),
+  ...of("CompatibilityDetailsResultIcon"),
+  ...of("NonVerifiedImage1A"),
+  ...of("NonVerifiedImage2A"),
+  ...of("NonVerifiedImage2B"),
+  ...of("NonVerifiedImage3A"),
+];
+const compatRating = [
+  ...of("Verified"),
+  ...of("Compatible"),
+  ...of("Playable"),
+  ...of("Unsupported"),
+  ...of("Unverified"),
+  ...of("SteamDeckCompatVerified"),
+  ...of("SteamDeckCompatPlayable"),
+  ...of("SteamDeckCompatUnsupported"),
+  ...of("SteamDeckCompatUnknown"),
+  ...of("SteamOSCompatCompatible"),
+  ...of("PreservedUnsupportedTag"),
+];
+const compatInfo = of("SteamDeckCompatInfo");
+const deckVerified = of("DeckVerifiedInfo");
+const compatChip = of("Details", "DeckVerifiedInfo");
+const compatLabel = of("CompatLabel");
   const play = of("PlayButton", "PlayButtonContainer");
   const container = of("PlayButtonContainer", "PlayButton");
   const selector = of("StreamingSelector", "PlayButton");
@@ -80,6 +113,23 @@ ${join(hero, "::after")} {
   background-size: 8px 8px; opacity: .55;
 }
 html[data-vd-bw="off"] ${join(hero, "::after")} { display: none !important; }
+
+  /* Compatibility badges */
+  ${join(compatIcon)} { filter: grayscale(1) contrast(1.06) !important; }
+  ${join(compatRating)} { color: var(--vd-ink-muted) !important; }
+  ${join(compatLabel)} { color: var(--vd-ink-muted) !important; }
+  ${join(compatInfo)} {
+    background: var(--vd-surface-raised) !important;
+    backdrop-filter: none !important;
+    border: 1px solid var(--vd-line) !important;
+    border-radius: 0 !important;
+  }
+  ${join(deckVerified)} {
+    background: var(--vd-surface-raised) !important;
+    border: 1px solid var(--vd-line) !important;
+    border-radius: 0 !important;
+  }
+  ${join(compatChip)} { background: var(--vd-line) !important; color: var(--vd-ink) !important; }
 ${join(of("ScrollContainer", "Glassy").flatMap((s) => of("Glassy", "ScrollContainer").map((g) => s + g)))} {
   background: var(--vd-bg) !important; background-image: none !important;
 }

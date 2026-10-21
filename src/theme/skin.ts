@@ -2,6 +2,7 @@
 import { cls } from "../steam/classes";
 import { statusDotsCss } from "../steam/statusDots";
 import { detailsCss } from "./details";
+import { downloadsCss } from "./downloads";
 import { fontsCss } from "./fonts";
 import { footerCss } from "./footer";
 import { keyboardCss } from "./keyboard";
@@ -82,6 +83,9 @@ ${transitionsCss()}
 
 /* Game details */
 ${detailsCss()}
+
+/* Downloads (page, dialog, bottom bar, status screen) */
+${downloadsCss()}
 
 /* Lock screen (PIN entry) */
 ${lockScreenCss()}
