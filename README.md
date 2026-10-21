@@ -60,7 +60,7 @@ Decky installs it for you; restart Steam to finish. You can still repeat the ste
 `.zip`, which replaces the previous one.
 
 **Uninstalling:** Decky → ⚙ → **Plugins** → Void Deck → **Uninstall**. Steam goes back to its original look
-right away.
+right away, and if Void Deck had installed the startup movie, your own movie is put back for you.
 
 ## Settings
 

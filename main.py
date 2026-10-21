@@ -11,6 +11,7 @@ value to JSON, and the frontend treats `success: false` as "show a toast"
 rather than as an exception.
 """
 
+import filecmp
 import shutil
 from pathlib import Path
 
@@ -31,6 +32,50 @@ INSTALLED_MOVIE = MOVIES_DIR / "deck_startup.webm"
 STATE_DIR = Path.home() / ".steam" / "root" / "config" / "uioverrides" / "voiddeck"
 MARKER = STATE_DIR / "installed"
 BACKUP_MOVIE = STATE_DIR / "deck_startup.webm.bak"
+
+
+def _movie_is_ours(path: Path) -> bool:
+    """True when the file on disk is still the exact movie Void Deck installed.
+
+    The user is free to drop a movie of their own into the folder, and that
+    file must survive: only the plugin's own copy is ever removed.
+    """
+    try:
+        return filecmp.cmp(path, BUNDLED_MOVIE, shallow=False)
+    except OSError:
+        return False
+
+
+def _take_movie_back() -> bool:
+    """Undo the install and give the user their own startup movie back.
+
+    Three cases, in order of who owns the file that is there now:
+
+    - the user replaced it with a movie of their own: it is left alone and
+      only Void Deck's bookkeeping is dropped;
+    - Void Deck's movie is there and a backup of the user's movie exists: the
+      backup is put back;
+    - Void Deck's movie is there and there is no backup: the file is removed
+      and SteamOS goes back to its own boot video.
+
+    Returns True when the user's original movie was restored.
+    """
+    restored = False
+    if INSTALLED_MOVIE.is_file() and not _movie_is_ours(INSTALLED_MOVIE):
+        if BACKUP_MOVIE.is_file():
+            BACKUP_MOVIE.unlink()
+    elif BACKUP_MOVIE.is_file():
+        shutil.copy2(BACKUP_MOVIE, INSTALLED_MOVIE)
+        BACKUP_MOVIE.unlink()
+        restored = True
+    elif INSTALLED_MOVIE.is_file():
+        INSTALLED_MOVIE.unlink()
+
+    if MARKER.is_file():
+        MARKER.unlink()
+    if STATE_DIR.is_dir() and not any(STATE_DIR.iterdir()):
+        STATE_DIR.rmdir()
+    return restored
 
 
 class Plugin:
@@ -84,19 +129,31 @@ class Plugin:
             return {"success": True, "installed": False, "restored": False}
 
         try:
-            restored = False
-            if BACKUP_MOVIE.is_file():
-                shutil.copy2(BACKUP_MOVIE, INSTALLED_MOVIE)
-                BACKUP_MOVIE.unlink()
-                restored = True
-            elif INSTALLED_MOVIE.is_file():
-                INSTALLED_MOVIE.unlink()
-            MARKER.unlink()
-            if STATE_DIR.is_dir() and not any(STATE_DIR.iterdir()):
-                STATE_DIR.rmdir()
+            restored = _take_movie_back()
         except OSError as error:
             decky.logger.error(f"Void Deck could not remove the startup movie: {error}")
             return {"success": False, "error": str(error)}
 
         decky.logger.info("Void Deck removed the startup movie")
         return {"success": True, "installed": False, "restored": restored}
+
+    async def _uninstall(self):
+        """Give the Deck its own startup movie back when Void Deck is removed.
+
+        Decky calls this only on uninstall, and the movie lives outside the
+        plugin folder, so without it the CtOS clip would keep playing on the
+        Deck after the plugin is gone and the user's own movie would stay
+        stranded in the backup file, with nothing left to restore it.
+        """
+        if not MARKER.is_file():
+            return
+
+        try:
+            restored = _take_movie_back()
+        except OSError as error:
+            decky.logger.error(f"Void Deck could not restore the startup movie: {error}")
+            return
+
+        decky.logger.info("Void Deck restored the startup movie on uninstall")
+        if restored:
+            decky.logger.info("Void Deck put the user's own startup movie back")
