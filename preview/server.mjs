@@ -32,6 +32,23 @@ const buttonAssets = {
   },
 };
 
+// The startup movie preview plays inside the panel, so the preview needs the very
+// same virtual module the rollup build generates (see rollup.config.js).
+const SPLASH_ASSET = "virtual:voiddeck-splash";
+const splashAsset = {
+  name: "splash-asset",
+  setup(build) {
+    build.onResolve({ filter: /^virtual:voiddeck-splash$/ }, (args) => ({
+      path: args.path,
+      namespace: "vd-splash",
+    }));
+    build.onLoad({ filter: /.*/, namespace: "vd-splash" }, () => {
+      const clip = readFileSync(here("../assets/ui/deck_startup_preview.webm"));
+      return { contents: `export const splashUrl = "data:video/webm;base64,${clip.toString("base64")}";` };
+    });
+  },
+};
+
 const ctx = await esbuild.context({
   entryPoints: [here("./main.tsx")],
   bundle: true,
@@ -44,7 +61,7 @@ const ctx = await esbuild.context({
     "@decky/ui": here("./stubs/decky-ui.tsx"),
     "@decky/api": here("./stubs/decky-api.ts"),
   },
-  plugins: [buttonAssets],
+  plugins: [buttonAssets, splashAsset],
   define: { "process.env.NODE_ENV": '"development"' },
   logLevel: "info",
 });

@@ -185,3 +185,7 @@ export function ButtonItem(props: { label?: ReactNode; description?: ReactNode; 
     </button>
   );
 }
+
+export function MenuGroup(props: { label?: ReactNode; children?: ReactNode }) {
+  return <>{props.children}</>;
+}

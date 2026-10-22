@@ -1,4 +1,7 @@
 // Sample data that imitates Steam stores (collectionStore, appStore, SteamClient).
+const POSTER_SVG =
+  '<svg xmlns="http://www.w3.org/2000/svg" width="120" height="180"><rect width="120" height="180" fill="#c8a24a"/>' +
+  '<circle cx="60" cy="70" r="34" fill="#2f6f9f"/><rect y="140" width="120" height="40" fill="#7a2f4f"/></svg>';
 const now = Math.floor(Date.now() / 1000);
 const hours = (h: number) => h * 60;
 
@@ -19,8 +22,12 @@ export function installMockSteam() {
       localGamesCollection: { allApps: [...apps, ...apps.map((a) => ({ ...a, appid: a.appid + 1 }))].sort((a, b) => a.display_name.localeCompare(b.display_name)) },
       myGamesCollection: { allApps: { length: 214 } },
     },
-    // No covers: the preview shows initials over the grid, like the design.
-    appStore: { GetCustomVerticalCapsuleURLs: () => [] },
+    // A flat test poster stands in for the real cover, so the black-and-white treatment
+    // and the red-accented wash can be checked in the preview.
+    appStore: {
+      GetCustomVerticalCapsuleURLs: () => [],
+      GetVerticalCapsuleURLForApp: () => "data:image/svg+xml;base64," + btoa(POSTER_SVG),
+    },
     SteamClient: {
       Apps: {
         RunGame: (id: string) => console.info(`[SteamClient] RunGame ${id}`),

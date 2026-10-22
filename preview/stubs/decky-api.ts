@@ -7,6 +7,12 @@ export const toaster = { toast: (_options: unknown) => Promise.resolve() };
 
 export const fetchNoCors = (url: string, request?: RequestInit) => fetch(url, request);
 
+// There is no plugin backend in the preview, so a backend call fails loudly instead of
+// returning a half-filled object. `never` keeps the call sites' result types.
+export const call = async (...args: unknown[]): Promise<never> => {
+  throw new Error(`call(${String(args[0])}) is not available in the preview`);
+};
+
 // The preview shows the Home screen when its route has a registered patch.
 const patches = new Map<string, Set<RoutePatch>>();
 const listeners = new Set<() => void>();
