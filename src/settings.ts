@@ -11,13 +11,14 @@ export type Settings = {
   theme: Theme;
   home: boolean;
   postersBw: boolean;
+  redAccents: boolean;
   dotEffect: DotEffect;
 };
 
 const STORAGE_KEY = "voiddeck-settings";
 const listeners = new Set<() => void>();
 
-export const defaultSettings: Settings = { skin: true, theme: "dark", home: true, postersBw: true, dotEffect: "wave" };
+export const defaultSettings: Settings = { skin: true, theme: "dark", home: true, postersBw: true, redAccents: false, dotEffect: "wave" };
 
 let settings: Settings = load();
 
@@ -39,6 +40,7 @@ function load(): Settings {
       theme: parsed.theme === "light" ? "light" : "dark",
       home: typeof parsed.home === "boolean" ? parsed.home : defaultSettings.home,
       postersBw: typeof parsed.postersBw === "boolean" ? parsed.postersBw : defaultSettings.postersBw,
+      redAccents: typeof parsed.redAccents === "boolean" ? parsed.redAccents : defaultSettings.redAccents,
       dotEffect: readDotEffect(parsed.dotEffect, parsed.dotAnimation),
     };
   } catch {
@@ -74,6 +76,11 @@ export function setPostersBw(postersBw: boolean): void {
   store({ ...settings, postersBw });
 }
 
+/** Red accents swap the white signal colour for the red one, so the focus rings, the
+    borders and the status dots all read as one accent instead of two. */
+export function setRedAccents(redAccents: boolean): void {
+  store({ ...settings, redAccents });
+}
 export function setDotEffect(dotEffect: DotEffect): void {
   store({ ...settings, dotEffect });
 }

@@ -6,7 +6,7 @@ import { useBootAnimation } from "../boot/useBootAnimation";
 import { StartupMoviePreview } from "../boot/splash";
 import { disableHome, enableHome } from "../home";
 import { resetLanguage, setLanguage, strings, useLanguage, type Language } from "../i18n";
-import { resetSettings, setDotEffect, setHome, setPostersBw, setSkin, useSettings, type DotEffect } from "../settings";
+import { resetSettings, setDotEffect, setHome, setPostersBw, setRedAccents, setSkin, useSettings, type DotEffect } from "../settings";
 import { applyPosterColor, applySkin, removeSkin } from "../skin";
 import { type UpdateCheck } from "../update/check";
 import { installUpdate } from "../update/install";
@@ -34,8 +34,14 @@ export function Panel() {
 
   const updateSkin = (on: boolean, isLight: boolean) => {
     setSkin(on, isLight ? "light" : "dark");
-    if (on) applySkin(isLight ? "light" : "dark");
+    // The accent travels with the skin: flipping the theme must not drop the red.
+    if (on) applySkin(isLight ? "light" : "dark", settings.redAccents ? "red" : "mono");
     else removeSkin();
+  };
+
+  const updateAccents = (on: boolean) => {
+    setRedAccents(on);
+    applySkin(settings.theme, on ? "red" : "mono");
   };
 
   const updateHome = (on: boolean) => {
@@ -52,7 +58,7 @@ export function Panel() {
   const resetDefaults = () => {
     resetLanguage();
     resetSettings();
-    applySkin("dark");
+    applySkin("dark", "mono");
     enableHome();
     applyPosterColor(true);
   };
@@ -140,6 +146,15 @@ export function Panel() {
           checked={settings.theme === "light"}
           disabled={!settings.skin}
           onChange={(isLight) => updateSkin(settings.skin, isLight)}
+        />
+      </PanelSectionRow>
+      <PanelSectionRow>
+        <ToggleField
+          label={copy.redAccents}
+          description={copy.redAccentsDescription}
+          checked={settings.redAccents}
+          disabled={!settings.skin}
+          onChange={updateAccents}
         />
       </PanelSectionRow>
       <PanelSectionRow>

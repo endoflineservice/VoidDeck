@@ -1,11 +1,15 @@
 // Library and other tabbed Steam pages (GamepadTabbedPage module).
 // Measurements are in Steam CSS px: 1 px here = 1.5 design px.
-import { cls } from "../steam/classes";
+import { cls, clsList } from "../steam/classes";
 import { join } from "./selectors";
 
 export function libraryCss(): string {
-  const tab = cls("Tab", "TabCount");
-  const selected = cls("Selected", "TabCount");
+  // The library panel is lazy-loaded, so the class map may not know its names yet.
+  // The attribute selectors keep the rules working while it loads.
+  const tabList = [...clsList("Tab", "TabCount").filter((c) => c !== ".vd-missing"), '[class*="Tab_"]'];
+  const selectedList = [...clsList("Selected", "TabCount").filter((c) => c !== ".vd-missing"), '[class*="Selected_"]'];
+  const tab = join(tabList);
+  const selected = join(selectedList);
   const glyphs = cls("Glyphs", "TabRow");
   const item = cls("LibraryItemBox");
   const hot = [`${item}:hover`, `${item}.gpfocus`];
@@ -18,14 +22,19 @@ export function libraryCss(): string {
 /* Void first: no background gradient */
 ${cls("GamepadLibrary")} { background: var(--vd-bg) !important; background-image: none !important; }
 
-/* Tabs: monospace labels, active tab in a white pill */
+/* Tabs: monospace labels, the selected one marked with an underline. A filled white
+   pill left Steam's own label colour on white, so the text disappeared; the underline
+   marks the tab without hiding the label underneath it. */
 ${tab} {
   background: transparent !important; color: var(--vd-ink-muted) !important;
   font-family: var(--vd-font-mono) !important; font-size: 10px !important; font-weight: 400 !important; letter-spacing: .08em !important;
 }
-${tab}${selected} { background: var(--vd-ink) !important; color: var(--vd-on-ink) !important; }
+${tab} * { color: var(--vd-ink-muted) !important; }
+${tab}:is(${selected}) { background: transparent !important; color: var(--vd-ink) !important; box-shadow: inset 0 -2px 0 var(--vd-ink) !important; }
+${tab}:is(${selected}) * { color: var(--vd-ink) !important; }
 ${tab}.gpfocus { box-shadow: ${ring} !important; color: var(--vd-ink) !important; }
-${tab}${selected}.gpfocus { color: var(--vd-on-ink) !important; }
+${tab}:is(${selected}).gpfocus { box-shadow: ${ring}, inset 0 -2px 0 var(--vd-ink) !important; }
+${tab}:is(${selected}).gpfocus * { color: var(--vd-ink) !important; }
 ${cls("TabCount")} { font-family: var(--vd-font-mono) !important; opacity: .6; }
 
 /* L1 / R1: outlined pills instead of Steam images */

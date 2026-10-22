@@ -119,7 +119,7 @@ export const homeCss = `
 }
 .vd-radar { position: absolute; inset: 0; pointer-events: none; }
 .vd-radar i, .vd-radar b {
-  position: absolute; width: 5px; height: 5px; border-radius: 50%; background: var(--vd-ink);
+  position: absolute; width: 5px; height: 5px; border-radius: 50%; background: var(--vd-accent-ink);
   opacity: 0; animation: vd-radar-dot 2.2s linear infinite both;
 }
 .vd-radar b { width: 7px; height: 7px; }
@@ -129,7 +129,7 @@ export const homeCss = `
 .vd-compile, .vd-magnet, .vd-diamond, .vd-rain { position: absolute; inset: 0; pointer-events: none; }
 .vd-compile i, .vd-magnet i, .vd-diamond i, .vd-rain i {
   position: absolute; width: 5px; height: 5px; border-radius: 50%;
-  background: var(--vd-ink); opacity: 0;
+  background: var(--vd-accent-ink); opacity: 0;
 }
 .vd-compile i { animation: vd-compile-dot 2.4s cubic-bezier(.65, 0, .35, 1) infinite both; }
 .vd-magnet i { animation: vd-glow-dot 2.4s cubic-bezier(.65, 0, .35, 1) infinite both; }
@@ -138,7 +138,7 @@ export const homeCss = `
    falling the whole field and fading in at the top, out at the bottom. */
 .vd-rain i {
   height: 72px; border-radius: 0; background-color: transparent;
-  background-image: radial-gradient(circle, var(--vd-ink) 1.5px, transparent 1.75px);
+  background-image: radial-gradient(circle, var(--vd-accent-ink) 1.5px, transparent 1.75px);
   background-size: var(--vd-dot-step) var(--vd-dot-step);
   -webkit-mask-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, .25) 45%, #000);
   mask-image: linear-gradient(to bottom, transparent, rgba(0, 0, 0, .25) 45%, #000);
@@ -235,11 +235,16 @@ html[data-vd-bw="off"] .vd-tile-art img { filter: none; }
 .vd-tile:hover .vd-tile-art::after, .vd-tile.is-focused .vd-tile-art::after {
   content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 2;
   background:
-    linear-gradient(var(--vd-ink), var(--vd-ink)) 0 0 / 100% 1.5px no-repeat,
-    linear-gradient(var(--vd-ink), var(--vd-ink)) 0 100% / 100% 1.5px no-repeat,
-    linear-gradient(var(--vd-ink), var(--vd-ink)) 0 0 / 1.5px 100% no-repeat,
-    linear-gradient(var(--vd-ink), var(--vd-ink)) 100% 0 / 1.5px 100% no-repeat,
-    linear-gradient(to top right, transparent calc(50% - 1.5px), var(--vd-ink) calc(50% - 1.5px) 50%, transparent 50%) 100% 0 / 14px 14px no-repeat;
+    linear-gradient(var(--vd-accent-ink), var(--vd-accent-ink)) 0 0 / 100% 1.5px no-repeat,
+    linear-gradient(var(--vd-accent-ink), var(--vd-accent-ink)) 0 100% / 100% 1.5px no-repeat,
+    linear-gradient(var(--vd-accent-ink), var(--vd-accent-ink)) 0 0 / 1.5px 100% no-repeat,
+    linear-gradient(var(--vd-accent-ink), var(--vd-accent-ink)) 100% 0 / 1.5px 100% no-repeat,
+    linear-gradient(to top right, transparent calc(50% - 1.5px), var(--vd-accent-ink) calc(50% - 1.5px) 50%, transparent 50%) 100% 0 / 14px 14px no-repeat;
 }
 .vd-tile.is-focused .vd-tile-meta { opacity: 1; }
+
+/* The accent ink follows the accent setting, so the dot field and the focus
+   frames turn red along with the rest of the interface. */
+.vd-home { --vd-accent-ink: var(--vd-ink); }
+.vd-home.is-red { --vd-accent-ink: var(--vd-signal); }
 `;

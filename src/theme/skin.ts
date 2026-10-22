@@ -15,13 +15,13 @@ import { scrollbarsCss } from "./scrollbars";
 import { settingsCss } from "./settings";
 import { sliderCss } from "./slider";
 import { transitionsCss } from "./transitions";
-import { tokensCss, type Theme } from "./tokens";
+import { tokensCss, type Accent, type Theme } from "./tokens";
 import { volumeCss } from "./volume";
 
-export function skinCss(theme: Theme): string {
+export function skinCss(theme: Theme, accent: Accent = "mono"): string {
   return `
 ${fontsCss}
-${tokensCss(theme)}
+${tokensCss(theme, ":root", accent)}
 
 /* Typography: Space Grotesk for all text (custom screens manage their own) */
 /* :where() keeps this rule at zero specificity so specific rules (clock, labels) win */

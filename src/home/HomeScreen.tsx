@@ -478,12 +478,13 @@ export function HomeScreen() {
   }, []);
   // Local tokens and fonts let the screen work even with the global skin turned off.
   const theme = skinState().theme;
+  const { redAccents } = useSettings();
   const css = useMemo(
     () =>
-      `${fontsCss}\n${tokensCss(theme, ".vd-home-viewport")}\n${homeCss}\n` +
+      `${fontsCss}\n${tokensCss(theme, ".vd-home-viewport", redAccents ? "red" : "mono")}\n${homeCss}\n` +
       // Steam Home enabled the top bar (clock, battery); without it, it stays transparent.
       `${cls("Header", "OverrideHeaderBackground")} { opacity: 1 !important; }`,
-    [theme],
+    [theme, redAccents],
   );
 
   const onBumper = (e: GamepadEvent) => {
@@ -496,7 +497,7 @@ export function HomeScreen() {
     <div className="vd-home-viewport" ref={ref}>
       <style>{css}</style>
       <Focusable
-        className="vd-home"
+        className={redAccents ? "vd-home is-red" : "vd-home"}
         ref={homeRef}
         style={{ zoom, width, height }}
         onButtonDown={onBumper}

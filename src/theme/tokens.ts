@@ -1,6 +1,6 @@
 // Void Deck tokens as CSS variables. Source of truth: the design (tokens.json).
 
-type Accent = "red" | "cyan" | "amber" | "violet";
+export type Accent = "mono" | "red" | "cyan" | "amber" | "violet";
 
 export type Theme = "dark" | "light";
 
@@ -31,13 +31,25 @@ const colors: Record<Theme, Record<string, string>> = {
 
 const accents: Record<Theme, Record<Accent, Record<string, string>>> = {
   dark: {
-    red: { signal: "#ffffff", "signal-text": "#ffffff", "focus-ring": "0 0 0 3px #000000, 0 0 0 5px #ffffff" },
+    mono: { signal: "#ffffff", "signal-text": "#ffffff", "focus-ring": "0 0 0 3px #000000, 0 0 0 5px #ffffff" },
+    red: {
+      signal: "#ff3b30",
+      "signal-text": "#ff6b61",
+      "focus-ring": "0 0 0 3px #000000, 0 0 0 5px #ff3b30",
+      "line-strong": "#8f3232",
+    },
     cyan: { signal: "#00a9c7", "signal-text": "#40d9f2", "focus-ring": "0 0 0 3px #000000, 0 0 0 6px #40d9f2" },
     amber: { signal: "#d98700", "signal-text": "#ffc45c", "focus-ring": "0 0 0 3px #000000, 0 0 0 6px #ffc45c" },
     violet: { signal: "#7657d9", "signal-text": "#b5a0ff", "focus-ring": "0 0 0 3px #000000, 0 0 0 6px #b5a0ff" },
   },
   light: {
-    red: { signal: "#ffffff", "signal-text": "#ffffff", "focus-ring": "0 0 0 3px #f2f2f2, 0 0 0 5px #000000" },
+    mono: { signal: "#ffffff", "signal-text": "#ffffff", "focus-ring": "0 0 0 3px #f2f2f2, 0 0 0 5px #000000" },
+    red: {
+      signal: "#c8102e",
+      "signal-text": "#c8102e",
+      "focus-ring": "0 0 0 3px #f2f2f2, 0 0 0 6px #c8102e",
+      "line-strong": "#b0413a",
+    },
     cyan: { signal: "#007a99", "signal-text": "#007a99", "focus-ring": "0 0 0 3px #f2f2f2, 0 0 0 6px #007a99" },
     amber: { signal: "#a65a00", "signal-text": "#a65a00", "focus-ring": "0 0 0 3px #f2f2f2, 0 0 0 6px #a65a00" },
     violet: { signal: "#6d4ad6", "signal-text": "#6d4ad6", "focus-ring": "0 0 0 3px #f2f2f2, 0 0 0 6px #6d4ad6" },
@@ -66,7 +78,7 @@ const declare = (vars: Record<string, string>) =>
     .map(([name, value]) => `--vd-${name}: ${value};`)
     .join(" ");
 
-/** A `selector { ... }` block with every `--vd-*` variable for the given theme. */
-export function tokensCss(theme: Theme, selector = ":root"): string {
-  return `${selector} { ${declare({ ...colors[theme], ...accents[theme].red })} ${declare(scale)} }`;
+/** A `selector { ... }` block with every `--vd-*` variable for the given theme and accent. */
+export function tokensCss(theme: Theme, selector = ":root", accent: Accent = "mono"): string {
+  return `${selector} { ${declare({ ...colors[theme], ...accents[theme][accent] })} ${declare(scale)} }`;
 }

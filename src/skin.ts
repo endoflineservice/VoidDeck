@@ -4,7 +4,7 @@ import { removeStatusDots, unwatchBattery, updateStatusDots, watchBattery } from
 import { harvestClasses } from "./steam/windowClasses";
 import { steamDocuments, steamWindows } from "./steam/windows";
 import { skinCss } from "./theme/skin";
-import type { Theme } from "./theme/tokens";
+import type { Accent, Theme } from "./theme/tokens";
 
 const STYLE_ID = "voiddeck-skin";
 // Steam creates new windows (overlays, popups) on demand and Wi-Fi changes, so check periodically.
@@ -12,6 +12,7 @@ const RESYNC_MS = 2000;
 
 let css: string | null = null;
 let theme: Theme = "dark";
+let accent: Accent = "mono";
 let postersBw = true;
 let timer: ReturnType<typeof setInterval> | undefined;
 
@@ -20,12 +21,17 @@ function setPosters(doc: Document): void {
   else doc.documentElement.dataset.vdBw = "off";
 }
 
+/** The accent rides on the document so CSS can key off it, like the poster flag. */
+function setAccent(doc: Document): void {
+  doc.documentElement.dataset.vdAccent = accent;
+}
+
 function sync(): void {
   if (css === null) return;
   // The on-screen keyboard publishes its class names only once it opens, so the theme
   // is rebuilt as soon as new ones are found.
   if (harvestClasses(steamWindows())) {
-    css = skinCss(theme);
+    css = skinCss(theme, accent);
     warnMissingClasses();
   }
   for (const doc of steamDocuments()) {
@@ -40,14 +46,16 @@ function sync(): void {
     if (doc.head.lastElementChild !== el) doc.head.appendChild(el);
     updateStatusDots(doc);
     setPosters(doc);
+    setAccent(doc);
   }
   // Steam does not always have the battery hook ready when the skin applies.
   watchBattery(sync);
 }
 
-export function applySkin(next: Theme): void {
+export function applySkin(next: Theme, nextAccent: Accent = "mono"): void {
   theme = next;
-  css = skinCss(next);
+  accent = nextAccent;
+  css = skinCss(next, accent);
   warnMissingClasses();
   sync();
   timer ??= setInterval(sync, RESYNC_MS);
@@ -70,6 +78,6 @@ export function removeSkin(): void {
 }
 
 /** Current state, so the panel can show it when reopened. */
-export function skinState(): { on: boolean; theme: Theme } {
-  return { on: css !== null, theme };
+export function skinState(): { on: boolean; theme: Theme; accent: Accent } {
+  return { on: css !== null, theme, accent };
 }

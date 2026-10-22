@@ -164,8 +164,8 @@ export function keyboardCss(): string {
   const focus = [...paint(key, ".gpfocus"), ...paint(states)];
 
   return `
-/* Panel: a black slab with a hairline frame, square like the matrix of keys inside it */
-${rule(panel, "background-color: var(--vd-bg) !important; background-image: none !important; border: 1px solid var(--vd-line) !important; border-radius: 0 !important; box-shadow: none !important; backdrop-filter: none !important;")}
+/* Panel: a black slab, square like the matrix of keys inside it */
+${rule(panel, "background-color: var(--vd-bg) !important; background-image: none !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; backdrop-filter: none !important;")}
 
 /* Steam paints the keyboard through its own custom properties rather than through backgrounds,
    and every one of its themes declares its own set of them. Remapping the whole set on the
@@ -215,10 +215,14 @@ ${rule(of("VirtualKeyboardTextBufferText"), `${mono} font-size: 14px !important;
 ${rule(of("VirtualKeyboardTextBufferCursor"), "background: var(--vd-ink) !important; color: var(--vd-on-ink) !important;")}
 
 /* Action buttons: square cells that invert on focus */
-${rule(action, "background: transparent !important; border: 1px solid var(--vd-line-strong) !important; border-radius: 0 !important; box-shadow: none !important; color: var(--vd-ink) !important;")}
-${rule(paint(action, ".gpfocus"), "background: var(--vd-ink) !important; border-color: var(--vd-ink) !important; color: var(--vd-on-ink) !important;")}
+${rule(action, "background: transparent !important; border: 0 !important; border-radius: 0 !important; box-shadow: none !important; color: var(--vd-ink) !important;")}
+${rule(paint(action, ".gpfocus"), "background: var(--vd-ink) !important; color: var(--vd-on-ink) !important;")}
 ${rule(action, `${mono} font-size: 11px !important; letter-spacing: .1em !important; text-transform: uppercase !important;`)}
 ${rule(paint(action, ".gpfocus").map((s) => `${s} span`), "color: var(--vd-on-ink) !important;")}
+/* The glyphs are white art on the panel. The global filter brightens them until they
+   glare, so inside the keyboard they keep their own contrast. */
+${rule([...paint(root, ' img[src*="/steaminputglyphs/"]'), ...paint(root, ' img[src*="shared_button"]')], "filter: grayscale(1) !important;")}
+
 ${rule(of("ActionButtonGlyph", "KeyboardKey"), "color: var(--vd-ink) !important; fill: var(--vd-ink) !important;")}
 
 /* The pointer that marks the key under the touchpad */

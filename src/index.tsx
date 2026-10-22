@@ -32,7 +32,7 @@ export default definePlugin(() => {
   // Each part stands alone: a failure in one must never stop the other from applying.
   if (settings.skin) {
     try {
-      applySkin(settings.theme);
+      applySkin(settings.theme, settings.redAccents ? "red" : "mono");
     } catch (error) {
       console.error("[Void Deck] skin failed to apply", error);
     }
