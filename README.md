@@ -31,7 +31,7 @@ Wi-Fi in the top bar become dot meters, and the battery turns red below 20 %.
 Brightness and volume are shown as rows of dots and toggles as pills, but they work exactly as before: Void Deck
 only changes how Steam looks, never how it works.
 
-**The on-screen keyboard.** It joins the same language: a black panel of square keys with hairline borders, dot-matrix
+**The on-screen keyboard.** It joins the same language: a black panel of square keys, dot-matrix
 letters, Space Mono for the modifier words and a dot-grid text line. The focused key inverts to solid ink, so you
 always know where you are typing.
 
@@ -44,8 +44,8 @@ preview, and a movie you had before is kept aside so you can put it back at any 
 
 You need [Decky Loader](https://decky.xyz) installed on your Steam Deck.
 
-1. Download `VoidDeck-v1.7.1.zip` from the [v1.7.1 release](https://github.com/endoflineservice/VoidDeck/releases/tag/v1.7.1), or copy its direct URL:
-   `https://github.com/endoflineservice/VoidDeck/releases/download/v1.7.1/VoidDeck-v1.7.1.zip`
+1. Download `VoidDeck-v1.8.0.zip` from the [v1.8.0 release](https://github.com/endoflineservice/VoidDeck/releases/tag/v1.8.0), or copy its direct URL:
+   `https://github.com/endoflineservice/VoidDeck/releases/download/v1.8.0/VoidDeck-v1.8.0.zip`
 2. On the Deck, in Game Mode, open Quick Access (the `···` button) → the **Decky** tab (plug icon) → **⚙**.
 3. Under **General**, turn on **Developer mode**.
 4. In the new **Developer** section, choose one of:
@@ -72,6 +72,7 @@ In Quick Access, Decky tab → **Void Deck**:
 - **Dot animation**: pick wave, boot, radar, ladder, compile, magnet, diamond or rain for the Home dot field, or
   turn it off.
 - **Light theme**: inverted colors for outdoor use.
+- **Red accents**: tint the focus rings, the borders and the status dots red instead of white.
 - **Language**: select English (the default) or Spanish. The selector is ready for more languages in future releases.
 - **Startup movie**: replace the Deck's boot video with the CtOS sequence, which also plays as a preview in the
   panel. Switching it off puts your own movie back.
