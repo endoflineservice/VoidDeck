@@ -68,7 +68,7 @@ export const homeCss = `
   position: absolute; right: -32px; top: 0; width: 560px; height: 100%; pointer-events: none;
   --vd-dot-step: 8px;
   overflow: hidden;
-  background-image: radial-gradient(circle, var(--vd-accent-faint) 1.5px, transparent 1.75px);
+  background-image: radial-gradient(circle, var(--vd-ink-faint) 1.5px, transparent 1.75px);
   background-size: var(--vd-dot-step) var(--vd-dot-step);
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 60%);
 }
@@ -104,7 +104,7 @@ export const homeCss = `
 .vd-boot, .vd-ladder { position: absolute; inset: 0; pointer-events: none; }
 .vd-boot i, .vd-ladder i {
   position: absolute; left: 0; right: 0; height: var(--vd-dot-step);
-  background-image: radial-gradient(circle, var(--vd-accent-ink) 1.5px, transparent 1.75px);
+  background-image: radial-gradient(circle, var(--vd-ink) 1.5px, transparent 1.75px);
   background-size: var(--vd-dot-step) var(--vd-dot-step);
   background-repeat: repeat-x;
   opacity: .08;
@@ -252,9 +252,8 @@ html[data-vd-bw="off"] .vd-tile-art img { filter: none; }
 }
 .vd-tile.is-focused .vd-tile-meta { opacity: 1; }
 
-/* The accent inks follow the accent setting, so the dot field and the focus
-   frames turn red along with the rest of the interface. The faint and muted inks are
-   the two levels the dot field paints with, so they carry the same accent. */
-.vd-home { --vd-accent-ink: var(--vd-ink); --vd-accent-faint: var(--vd-ink-faint); --vd-accent-muted: var(--vd-ink-muted); }
-.vd-home.is-red { --vd-accent-ink: var(--vd-signal); --vd-accent-faint: var(--vd-line-strong); --vd-accent-muted: var(--vd-signal); }
+/* The accent inks colour the marks that move — the sweep band and the effect dots — while
+   the resting grid stays grey, so only the lit dots carry the accent, not the whole field. */
+.vd-home { --vd-accent-ink: var(--vd-ink); --vd-accent-muted: var(--vd-ink-muted); }
+.vd-home.is-red { --vd-accent-ink: var(--vd-signal); --vd-accent-muted: var(--vd-signal); }
 `;

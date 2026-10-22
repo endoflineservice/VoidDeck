@@ -65,7 +65,7 @@ ${join(field)} {
   border-radius: 0 !important;
 }
 ${join(focusedField)} {
-  background: var(--vd-surface-raised) !important;
+  background: var(--vd-bg) !important;
   box-shadow: inset 2px 0 0 var(--vd-ink) !important;
 }
 ${join(fieldLabel)}, ${join(fieldLabel.map((selector) => `${selector} *`))} {
