@@ -68,7 +68,7 @@ export const homeCss = `
   position: absolute; right: -32px; top: 0; width: 560px; height: 100%; pointer-events: none;
   --vd-dot-step: 8px;
   overflow: hidden;
-  background-image: radial-gradient(circle, var(--vd-ink-faint) 1.5px, transparent 1.75px);
+  background-image: radial-gradient(circle, var(--vd-accent-faint) 1.5px, transparent 1.75px);
   background-size: var(--vd-dot-step) var(--vd-dot-step);
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 60%);
 }
@@ -77,7 +77,7 @@ export const homeCss = `
    the sweep's mask would otherwise clip them to the band and tie the two effects. */
 .vd-flicker {
   position: absolute; inset: 0; pointer-events: none;
-  background-image: radial-gradient(circle, var(--vd-ink-muted) 1.5px, transparent 1.75px);
+  background-image: radial-gradient(circle, var(--vd-accent-muted) 1.5px, transparent 1.75px);
   background-size: var(--vd-dot-step) var(--vd-dot-step);
   -webkit-mask-image: linear-gradient(105deg, transparent 18%, #000 42%, #000 58%, transparent 82%);
   -webkit-mask-size: 420px 100%;
@@ -104,7 +104,7 @@ export const homeCss = `
 .vd-boot, .vd-ladder { position: absolute; inset: 0; pointer-events: none; }
 .vd-boot i, .vd-ladder i {
   position: absolute; left: 0; right: 0; height: var(--vd-dot-step);
-  background-image: radial-gradient(circle, var(--vd-ink) 1.5px, transparent 1.75px);
+  background-image: radial-gradient(circle, var(--vd-accent-ink) 1.5px, transparent 1.75px);
   background-size: var(--vd-dot-step) var(--vd-dot-step);
   background-repeat: repeat-x;
   opacity: .08;
@@ -223,6 +223,15 @@ export const homeCss = `
 /* Covers are monochrome until the tile is hovered or focused. */
 .vd-tile-art img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: grayscale(1); transition: filter 150ms ease; }
 .vd-tile:hover .vd-tile-art img, .vd-tile.is-focused .vd-tile-art img { filter: none; }
+/* With red accents the cover keeps its monochrome and takes a red wash instead of showing
+   its colours: the grid stays one picture, and the accent is what marks the tile. */
+html:not([data-vd-bw="off"]) .vd-home.is-red .vd-tile:hover .vd-tile-art img,
+html:not([data-vd-bw="off"]) .vd-home.is-red .vd-tile.is-focused .vd-tile-art img { filter: grayscale(1); }
+html:not([data-vd-bw="off"]) .vd-home.is-red .vd-tile:hover .vd-tile-art::before,
+html:not([data-vd-bw="off"]) .vd-home.is-red .vd-tile.is-focused .vd-tile-art::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background: var(--vd-signal); opacity: .4;
+}
 html[data-vd-bw="off"] .vd-tile-art img { filter: none; }
 .vd-tile-glyph { font: 800 72px/1 var(--vd-font-dot); color: var(--vd-ink); }
 .vd-tile-meta { display: flex; flex-direction: column; gap: 2px; padding: var(--vd-space-2) var(--vd-space-1) 0; opacity: 0; transition: opacity 150ms; }
@@ -243,8 +252,9 @@ html[data-vd-bw="off"] .vd-tile-art img { filter: none; }
 }
 .vd-tile.is-focused .vd-tile-meta { opacity: 1; }
 
-/* The accent ink follows the accent setting, so the dot field and the focus
-   frames turn red along with the rest of the interface. */
-.vd-home { --vd-accent-ink: var(--vd-ink); }
-.vd-home.is-red { --vd-accent-ink: var(--vd-signal); }
+/* The accent inks follow the accent setting, so the dot field and the focus
+   frames turn red along with the rest of the interface. The faint and muted inks are
+   the two levels the dot field paints with, so they carry the same accent. */
+.vd-home { --vd-accent-ink: var(--vd-ink); --vd-accent-faint: var(--vd-ink-faint); --vd-accent-muted: var(--vd-ink-muted); }
+.vd-home.is-red { --vd-accent-ink: var(--vd-signal); --vd-accent-faint: var(--vd-line-strong); --vd-accent-muted: var(--vd-signal); }
 `;

@@ -52,6 +52,13 @@ ${item} { box-shadow: none !important; border-radius: 0 !important; }
 ${item} ${cls("Capsule", "CapsuleVisible")} { border-radius: 0 !important; overflow: hidden !important; filter: grayscale(1) !important; transition: filter 150ms ease !important; }
 ${join(hot)} ${cls("Capsule", "CapsuleVisible")} { filter: none !important; }
 html[data-vd-bw="off"] ${item} ${cls("Capsule", "CapsuleVisible")} { filter: none !important; }
+/* With red accents the cover keeps its monochrome and takes a red wash instead of showing
+   its colours. The capsule box is not positioned, so the wash is drawn from the item. */
+html:not([data-vd-bw="off"])[data-vd-accent="red"] ${join(hot)} ${cls("Capsule", "CapsuleVisible")} { filter: grayscale(1) !important; }
+html:not([data-vd-bw="off"])[data-vd-accent="red"] ${join(hot)}::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: var(--vd-signal); opacity: .4;
+}
 
 /* Focus frame: the top-right corner is cut away and the frame is drawn as five background
    strips inside the clipped box, so the border turns the corner along the cut. */
