@@ -59,8 +59,10 @@ ${tab}::after, ${rail}::after {
     linear-gradient(to top right, transparent calc(50% - .75px), var(--vd-frame) calc(50% - .75px) calc(50% + .75px), transparent calc(50% + .75px)) 100% 0 / var(--vd-cut) var(--vd-cut) no-repeat;
 }
 
-/* Rows: focus raises the row and marks the left edge */
-${field}.gpfocus, ${field}.gpfocuswithin { background: var(--vd-surface-raised) !important; box-shadow: inset 2px 0 0 var(--vd-ink) !important; }
+/* Rows: focus marks the left edge. Only the focused control takes the raised fill, since
+   a toggle leaves its row gpfocuswithin and a row-keyed fill would stay lit. */
+${field}.gpfocus { background: var(--vd-surface-raised) !important; box-shadow: inset 2px 0 0 var(--vd-ink) !important; }
+${field}.gpfocuswithin { box-shadow: inset 2px 0 0 var(--vd-ink) !important; }
 
 /* Sliders (brightness, volume…) as dot meters */
 ${track} { height: 8px !important; border-radius: 0 !important; background: ${dotRow("var(--vd-ink-faint)")} !important; }
